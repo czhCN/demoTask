@@ -1,6 +1,6 @@
 {
   "todoListId": 5,
-  "scheduleId": 7,
+  "scheduleId": 5,
   "todoList": [
     {
       "id": 1,
@@ -39,15 +39,15 @@
       "description": "Remind me to call John today",
       "hours": 2,
       "completed": false,
-      "date": "2024-12-22T00:00:00.000Z",
-      "order": 1
+      "date": "2024-12-23",
+      "order": 0
     },
     {
       "id": 2,
       "description": "Cook food for today",
       "hours": 3,
       "completed": false,
-      "date": "2024-12-22T00:00:00.000Z",
+      "date": "2024-12-22",
       "order": 0
     },
     {
@@ -73,22 +73,6 @@
       "completed": false,
       "date": "2024-12-24",
       "order": 5
-    },
-    {
-      "description": "Task 1",
-      "completed": false,
-      "hours": 2,
-      "date": "2024-12-23T00:00:00.000Z",
-      "order": 0,
-      "id": 6
-    },
-    {
-      "description": "Task 2",
-      "completed": false,
-      "hours": 3,
-      "date": "2024-12-23T00:00:00.000Z",
-      "order": 1,
-      "id": 7
     }
   ]
 }
