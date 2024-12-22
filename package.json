@@ -1,0 +1,19 @@
+{
+  "name": "demotask",
+  "version": "1.0.0",
+  "description": "- backend    - 后台 - frontend   - 前端 - 打包方式",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/czhCN/demoTask-.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/czhCN/demoTask-/issues"
+  },
+  "homepage": "https://github.com/czhCN/demoTask-#readme"
+}
