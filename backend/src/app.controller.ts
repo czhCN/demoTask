@@ -2,12 +2,12 @@
  * @Author: C_Com 2632662477@qq.com
  * @Date: 2024-12-21 14:56:52
  * @LastEditors: C_Com 2632662477@qq.com
- * @LastEditTime: 2024-12-22 19:55:43
+ * @LastEditTime: 2024-12-22 21:13:25
  * @FilePath: /demoTask/backend/src/app.controller.ts
  */
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { AppService } from './app.service';
-import { BaseDto, TodoDto } from './app.dto';
+import { BaseDto, TodoDto, ScheduleDto } from './app.dto';
 
 @Controller()
 export class AppController {
@@ -34,17 +34,27 @@ export class AppController {
   }
 
   @Delete('todo/:id')
-  deleteTodo(@Param('id') id: number): BaseDto {
-    return this.appService.deleteTodo(id);
+  deleteTodo(@Param('id') id: string): BaseDto {
+    return this.appService.deleteTodo(Number(id));
+  }
+
+  @Get('schedule')
+  getSchedule(): BaseDto {
+    return this.appService.getSchedule();
   }
 
   @Post('schedule')
-  createSchedule(@Body() schedule: any): string {
-    return this.appService.createSchedule(schedule);
+  createSchedule(@Body() todo: ScheduleDto): BaseDto {
+    return this.appService.createSchedule(todo);
   }
 
   @Post('schedule/:id')
-  updateScheduleById(@Body() schedule: any): string {
-    return this.appService.updateScheduleById(schedule);
+  updateSchedule(@Body() todo: ScheduleDto, @Param('id') id: string): BaseDto {
+    return this.appService.updateSchedule(Number(id), todo);
+  }
+
+  @Delete('schedule/:id')
+  deleteSchedule(@Param('id') id: string): BaseDto {
+    return this.appService.deleteSchedule(Number(id));
   }
 }

@@ -1,0 +1,183 @@
+.schedule-content {
+  padding: 20px 0;
+}
+
+.schedule-content h1 {
+  margin-bottom: 32px;
+}
+
+.schedule-day {
+  margin-bottom: 24px;
+}
+
+.schedule-day h2 {
+  font-size: 1.2rem;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.schedule-tasks {
+  min-height: 100px;
+  padding: 8px 0;
+}
+
+.schedule-task {
+  background: #f5f5f5;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: move;
+  transition: background-color 0.2s ease;
+  min-height: 48px;
+}
+
+.task-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.task-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.checkbox {
+  width: 24px;
+  height: 24px;
+  border: 1.5px solid #ddd;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #fff;
+  font-size: 14px;
+}
+
+.checkbox.checked {
+  background-color: #4CAF50;
+  border-color: #4CAF50;
+}
+
+.hour-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: #eee;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #666;
+  font-size: 16px;
+  padding: 0;
+}
+
+.hours {
+  min-width: 24px;
+  text-align: center;
+  font-size: 1rem;
+  color: #333;
+}
+
+.more-btn {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: #eee;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #666;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.schedule-task input {
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: transparent;
+  flex: 1;
+  margin-right: 8px;
+}
+
+.schedule-task:hover {
+  background: #eee;
+}
+
+.task-hours {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.day-total {
+  margin-top: 16px;
+  text-align: right;
+  color: #666;
+  font-size: 0.9rem;
+  padding-right: 8px;
+}
+
+.add-task {
+  margin-top: 16px;
+  background: transparent !important;
+  cursor: default !important;
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 12px;
+}
+
+.add-task .checkbox {
+  color: #666;
+  font-size: 20px;
+  line-height: 0;
+}
+
+.add-task input {
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  color: #333;
+  background: transparent;
+  width: 200px;
+  margin-left: 12px;
+  padding: 0;
+}
+
+.add-task input:focus {
+  border-bottom: 1px solid #ddd;
+}
+
+.schedule-task .task-left span {
+  transition: text-decoration 0.2s ease;
+}
+
+.schedule-task .checkbox.checked + span,
+.schedule-task .checkbox.checked ~ span {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.schedule-task input {
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: transparent;
+  flex: 1;
+  margin-right: 8px;
+}
+
+.schedule-day[data-hours="8"] .add-task {
+  display: none;
+}

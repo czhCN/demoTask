@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { BaseDto, ScheduleTodoDto, TodoDto } from './app.dto';
+import { BaseDto, ScheduleDto, TodoDto } from './app.dto';
 import * as fs from 'fs';
 @Injectable()
 export class AppService implements OnModuleInit {
@@ -45,27 +45,42 @@ export class AppService implements OnModuleInit {
     this.todoList.todoList = this.todoList.todoList.filter(
       (item) => item.id !== id,
     );
+    console.log(this.todoList);
+
     return this.todoList;
   }
 
-  updateSchedule(schedule: any): string {
-    throw new Error('Method not implemented.');
-  }
-  createSchedule(schedule: any): string {
-    throw new Error('Method not implemented.');
+  getSchedule(): BaseDto {
+    return this.todoList;
   }
 
-  getSchedule(): string {
-    return 'Hello World!';
+  createSchedule(schedule: ScheduleDto): BaseDto {
+    this.todoList.scheduleId++;
+    schedule.id = this.todoList.scheduleId;
+    this.todoList.scheduleTodoList.push(schedule);
+    return this.todoList;
   }
 
-  updateScheduleById(schedule: any): string {
-    // this.todoList.scheduleTodoList.forEach((item) => {
-    //   if (item.id === schedule.id) {
-    //     item.scheduleList = schedule.scheduleList;
-    //   }
-    // });
-    // return 'success';
-    throw new Error('Method not implemented.');
+  updateSchedule(id: number, schedule: ScheduleDto): BaseDto {
+    console.log('-------');
+
+    this.todoList.scheduleTodoList.forEach((item) => {
+      if (item.id === id) {
+        item.order = schedule.order;
+        item.date = schedule.date;
+        item.hours = schedule.hours;
+        item.description = schedule.description;
+        item.completed = schedule.completed;
+        console.log(item);
+      }
+    });
+    return this.todoList;
+  }
+
+  deleteSchedule(id: number): BaseDto {
+    this.todoList.scheduleTodoList = this.todoList.scheduleTodoList.filter(
+      (item) => item.id !== id,
+    );
+    return this.todoList;
   }
 }

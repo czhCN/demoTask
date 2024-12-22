@@ -9,6 +9,7 @@
 import React, { useEffect, useState } from 'react';
 import './TodoList.css';
 import { TodoItem } from '../types';
+import { Schedule } from './Schedule';
 
 interface BaseDto {
   todoListId: number;
@@ -17,6 +18,7 @@ interface BaseDto {
 }
 
 export const TodoList: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<'todo' | 'schedule'>('todo');
   const [todos, setTodos] = useState<TodoItem[]>([]);
   const [newTaskHours, setNewTaskHours] = useState(1);
   const [newTaskDesc, setNewTaskDesc] = useState("Add task");
@@ -165,98 +167,114 @@ export const TodoList: React.FC = () => {
   return (
     <div className="todo-container">
       <nav className="nav-tabs">
-        <div className="tab active">To-do</div>
-        <div className="tab">Schedule</div>
+        <div 
+          className={`tab ${activeTab === 'todo' ? 'active' : ''}`}
+          onClick={() => setActiveTab('todo')}
+        >
+          To-do
+        </div>
+        <div 
+          className={`tab ${activeTab === 'schedule' ? 'active' : ''}`}
+          onClick={() => setActiveTab('schedule')}
+        >
+          Schedule
+        </div>
       </nav>
       
-      <h1>To-do list</h1>
-      
-      <div className="todos">
-        {todos.map(todo => (
-          <div key={todo.id} className="todo-item">
+      {activeTab === 'todo' ? (
+        <>
+          <h1>To-do list</h1>
+          <div className="todos">
+            {todos.map(todo => (
+              <div key={todo.id} className="todo-item">
+                <div className="todo-left">
+                  <div 
+                    className={`checkbox ${todo.completed ? 'checked' : ''}`}
+                    onClick={() => handleToggleComplete(todo)}
+                  >
+                    {todo.completed && <span>✓</span>}
+                  </div>
+                  <span className="description">{todo.description}</span>
+                </div>
+                <div className="todo-right">
+                  <button 
+                    className="hour-btn"
+                    onClick={() => handleUpdateHours(todo, -1)}
+                  >-</button>
+                  <span className="hours">{todo.hours}</span>
+                  <button 
+                    className="hour-btn"
+                    onClick={() => handleUpdateHours(todo, 1)}
+                  >+</button>
+                  <button 
+                    className="more-btn"
+                    onClick={() => handleDeleteTodo(todo.id)}
+                  >›</button>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="total">
+            <div className="line"></div>
+            <div className="total-hours">{todos.reduce((sum, todo) => sum + todo.hours, 1)}</div>
+          </div>
+
+          <div className="todo-item add-task">
             <div className="todo-left">
               <div 
-                className={`checkbox ${todo.completed ? 'checked' : ''}`}
-                onClick={() => handleToggleComplete(todo)}
+                className="checkbox add" 
+                onClick={handleAddTask}
               >
-                {todo.completed && <span>✓</span>}
+                <span>+</span>
               </div>
-              <span className="description">{todo.description}</span>
+              {isEditing ? (
+                <input
+                  type="text"
+                  className="description-input"
+                  value={newTaskDesc}
+                  onChange={handleDescChange}
+                  onKeyDown={handleKeyPress}
+                  onBlur={() => {
+                    if (newTaskDesc.trim() === "") {
+                      setNewTaskDesc("Add task");
+                    }
+                    setIsEditing(false);
+                  }}
+                  autoFocus
+                />
+              ) : (
+                <span 
+                  className="description"
+                  onDoubleClick={handleDescClick}
+                >
+                  {newTaskDesc}
+                </span>
+              )}
             </div>
             <div className="todo-right">
               <button 
                 className="hour-btn"
-                onClick={() => handleUpdateHours(todo, -1)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleNewTaskHours(-1);
+                }}
               >-</button>
-              <span className="hours">{todo.hours}</span>
+              <span className="hours">{newTaskHours}</span>
               <button 
                 className="hour-btn"
-                onClick={() => handleUpdateHours(todo, 1)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleNewTaskHours(1);
+                }}
               >+</button>
-              <button 
-                className="more-btn"
-                onClick={() => handleDeleteTodo(todo.id)}
-              >›</button>
             </div>
           </div>
-        ))}
-      </div>
-      
-      <div className="total">
-        <div className="line"></div>
-        <div className="total-hours">{todos.reduce((sum, todo) => sum + todo.hours, 1)}</div>
-      </div>
-
-      <div className="todo-item add-task">
-        <div className="todo-left">
-          <div 
-            className="checkbox add" 
-            onClick={handleAddTask}
-          >
-            <span>+</span>
-          </div>
-          {isEditing ? (
-            <input
-              type="text"
-              className="description-input"
-              value={newTaskDesc}
-              onChange={handleDescChange}
-              onKeyDown={handleKeyPress}
-              onBlur={() => {
-                if (newTaskDesc.trim() === "") {
-                  setNewTaskDesc("Add task");
-                }
-                setIsEditing(false);
-              }}
-              autoFocus
-            />
-          ) : (
-            <span 
-              className="description"
-              onDoubleClick={handleDescClick}
-            >
-              {newTaskDesc}
-            </span>
-          )}
-        </div>
-        <div className="todo-right">
-          <button 
-            className="hour-btn"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleNewTaskHours(-1);
-            }}
-          >-</button>
-          <span className="hours">{newTaskHours}</span>
-          <button 
-            className="hour-btn"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleNewTaskHours(1);
-            }}
-          >+</button>
-        </div>
-      </div>
+        </>
+      ) : (
+        <Schedule />
+      )}
     </div>
   );
 };
+

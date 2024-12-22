@@ -34,6 +34,7 @@ h1 {
   justify-content: space-between;
   align-items: center;
   padding: 12px 0;
+  min-height: 48px;
 }
 
 .todo-left {
@@ -69,6 +70,7 @@ h1 {
 .description {
   font-size: 1rem;
   color: #333;
+  transition: text-decoration 0.2s ease;
 }
 
 .todo-right {
@@ -127,6 +129,9 @@ h1 {
 
 .add-task {
   margin-top: 20px;
+  display: flex;
+  align-items: center;
+  min-height: 48px;
 }
 
 .description-input {
@@ -136,10 +141,15 @@ h1 {
   color: #333;
   background: transparent;
   width: 200px;
-  padding: 0;
   margin-left: 16px;
+  padding: 0;
 }
 
 .description-input:focus {
   border-bottom: 1px solid #ddd;
+}
+
+.todo-item .checkbox.checked + .description {
+  text-decoration: line-through;
+  color: #999;
 }
