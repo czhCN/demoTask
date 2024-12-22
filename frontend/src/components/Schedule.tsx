@@ -143,39 +143,58 @@ export const Schedule: React.FC = () => {
   // 处理拖拽结束
   const onDragEnd = async (result: any) => {
     if (!result.destination) return;
-
+    
     const sourceDay = days.find(day => day.date === result.source.droppableId);
     const destDay = days.find(day => day.date === result.destination.droppableId);
     
     if (!sourceDay || !destDay) return;
 
-    // 如果是在同一天内拖拽，只需要更新顺序
-    if (sourceDay.date === destDay.date) {
-      const newTodos = Array.from(sourceDay.todos);
-      const [removed] = newTodos.splice(result.source.index, 1);
-      newTodos.splice(result.destination.index, 0, removed);
-
-      // 计算新的 order 值
-      const targetOrder = result.destination.index;
-      const updatedTodos = newTodos.map((todo, index) => ({
-        ...todo,
-        order: index >= targetOrder ? index + 1 : index
-      }));
+    // 如果是跨天拖拽，检查目标天的总时间是否会超过8小时
+    if (sourceDay !== destDay) {
+      const movedTask = sourceDay.todos[result.source.index];
+      const destDayNewTotal = destDay.totalHours + movedTask.hours;
+      
+      if (destDayNewTotal > 8) {
+        console.error('目标日期总时间超过8小时限制');
+        return;
+      }
 
       try {
-        // 更新所有受影响的任务的顺序
-        const updates = updatedTodos.map(todo => 
+        const movedTask = sourceDay.todos[result.source.index];
+        const response = await fetch(`http://localhost:3000/schedule/${movedTask.id}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...movedTask,
+            date: destDay.date,
+            order: result.destination.index
+          }),
+        });
+        const data: BaseDto = await response.json();
+        updateDaysWithTodos(data.scheduleTodoList);
+      } catch (error) {
+        console.error('更新任务失败:', error);
+        await fetchSchedule();
+      }
+    } else {
+      // 同一天内调整顺序
+      try {
+        const newTodos = Array.from(sourceDay.todos);
+        const [movedTask] = newTodos.splice(result.source.index, 1);
+        newTodos.splice(result.destination.index, 0, movedTask);
+
+        // 更新所有受影响任务的顺序
+        const updates = newTodos.map((todo, index) => 
           fetch(`http://localhost:3000/schedule/${todo.id}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               ...todo,
-              order: todo.order
+              order: index
             }),
           })
         );
         
-        // 等待所有更新完成
         const responses = await Promise.all(updates);
         const lastResponse = await responses[responses.length - 1].json();
         updateDaysWithTodos(lastResponse.scheduleTodoList);
@@ -183,43 +202,6 @@ export const Schedule: React.FC = () => {
         console.error('更新任务顺序失败:', error);
         await fetchSchedule();
       }
-      return;
-    }
-
-    // 跨天拖拽的逻辑
-    const taskToMove = {...sourceDay.todos[result.source.index]};
-    const newDestTotalHours = destDay.totalHours + taskToMove.hours;
-
-    if (newDestTotalHours > 8) {
-      return;
-    }
-
-    // 计算目标日期的新 order
-    const targetOrder = result.destination.index;
-    const destTodos = [...destDay.todos];
-    destTodos.forEach(todo => {
-      if ((todo as any).order >= targetOrder) {
-        (todo as any).order += 1;
-      }
-    });
-
-    try {
-      // 更新移动的任务
-      const response = await fetch(`http://localhost:3000/schedule/${taskToMove.id}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...taskToMove,
-          date: destDay.date,
-          order: targetOrder
-        }),
-      });
-      
-      const data = await response.json();
-      updateDaysWithTodos(data.scheduleTodoList);
-    } catch (error) {
-      console.error('移动任务失败:', error);
-      await fetchSchedule();
     }
   };
 
@@ -392,7 +374,7 @@ export const Schedule: React.FC = () => {
               )}
             </Droppable>
             <div className="day-total">Total: {day.totalHours}h</div>
-            {index === days.length - 1 && (
+            {index === days.length - 1 && day.totalHours < 8 && (
               <div className="schedule-task add-task">
                 <div className="task-left">
                   <div 

@@ -37,6 +37,31 @@ h1 {
   min-height: 48px;
 }
 
+.todo-item.add-task {
+  margin-top: 20px;
+}
+
+.todo-item.add-task .description-input {
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  color: #333;
+  background: transparent;
+  width: 200px;
+  margin-left: 16px;
+  padding: 0;
+}
+
+.todo-item.add-task .description-input:focus {
+  border-bottom: 1px solid #ddd;
+}
+
+.todo-item.add-task .checkbox {
+  color: #666;
+  font-size: 20px;
+  line-height: 0;
+}
+
 .todo-left {
   display: flex;
   align-items: center;

@@ -66,11 +66,11 @@ export class AppService implements OnModuleInit {
 
     this.todoList.scheduleTodoList.forEach((item) => {
       if (item.id === id) {
-        item.order = schedule.order;
-        item.date = schedule.date;
-        item.hours = schedule.hours;
-        item.description = schedule.description;
-        item.completed = schedule.completed;
+        item.order = schedule.order ?? item.order;
+        item.date = schedule.date ?? item.date;
+        item.hours = schedule.hours ?? item.hours;
+        item.description = schedule.description ?? item.description;
+        item.completed = schedule.completed ?? item.completed;
         console.log(item);
       }
     });
