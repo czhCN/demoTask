@@ -30,8 +30,14 @@
   justify-content: space-between;
   align-items: center;
   cursor: move;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
   min-height: 48px;
+}
+
+.schedule-task.dragging {
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: scale(1.02);
 }
 
 .schedule-task.add-task {
@@ -95,6 +101,8 @@
   cursor: pointer;
   color: #fff;
   font-size: 14px;
+  flex-shrink: 0;
+  background: #fff;
 }
 
 .checkbox.checked {
@@ -175,17 +183,6 @@
 .schedule-task .checkbox.checked ~ span {
   text-decoration: line-through;
   color: #999;
-}
-
-.schedule-task input {
-  border: none;
-  outline: none;
-  font-size: 1rem;
-  color: #333;
-  background: transparent;
-  flex: 1;
-  margin-right: 8px;
-  padding: 0;
 }
 
 .schedule-day[data-hours="8"] .schedule-task.add-task {

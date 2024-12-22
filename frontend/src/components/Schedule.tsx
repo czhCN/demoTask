@@ -318,12 +318,12 @@ export const Schedule: React.FC = () => {
                       draggableId={String(todo.id)}
                       index={index}
                     >
-                      {(provided) => (
+                      {(provided, snapshot) => (
                         <div
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
-                          className="schedule-task"
+                          className={`schedule-task ${snapshot.isDragging ? 'dragging' : ''}`}
                         >
                           <div className="task-left">
                             <div 
