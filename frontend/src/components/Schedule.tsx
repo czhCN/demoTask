@@ -158,30 +158,16 @@ export const Schedule: React.FC = () => {
         console.error('目标日期总时间超过8小时限制');
         return;
       }
+    }
 
-      try {
-        const movedTask = sourceDay.todos[result.source.index];
-        const response = await fetch(`http://localhost:3000/schedule/${movedTask.id}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            ...movedTask,
-            date: destDay.date,
-            order: result.destination.index
-          }),
-        });
-        const data: BaseDto = await response.json();
-        updateDaysWithTodos(data.scheduleTodoList);
-      } catch (error) {
-        console.error('更新任务失败:', error);
-        await fetchSchedule();
-      }
-    } else {
-      // 同一天内调整顺序
-      try {
+    try {
+      const movedTask = sourceDay.todos[result.source.index];
+      
+      if (sourceDay === destDay) {
+        // 同一天内调整顺序
         const newTodos = Array.from(sourceDay.todos);
-        const [movedTask] = newTodos.splice(result.source.index, 1);
-        newTodos.splice(result.destination.index, 0, movedTask);
+        const [removed] = newTodos.splice(result.source.index, 1);
+        newTodos.splice(result.destination.index, 0, removed);
 
         // 更新所有受影响任务的顺序
         const updates = newTodos.map((todo, index) => 
@@ -198,10 +184,23 @@ export const Schedule: React.FC = () => {
         const responses = await Promise.all(updates);
         const lastResponse = await responses[responses.length - 1].json();
         updateDaysWithTodos(lastResponse.scheduleTodoList);
-      } catch (error) {
-        console.error('更新任务顺序失败:', error);
-        await fetchSchedule();
+      } else {
+        // 跨天移动
+        const response = await fetch(`http://localhost:3000/schedule/${movedTask.id}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...movedTask,
+            date: destDay.date,
+            order: result.destination.index
+          }),
+        });
+        const data = await response.json();
+        updateDaysWithTodos(data.scheduleTodoList);
       }
+    } catch (error) {
+      console.error('更新任务���败败:', error);
+      await fetchSchedule();
     }
   };
 
@@ -324,6 +323,7 @@ export const Schedule: React.FC = () => {
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                           className={`schedule-task ${snapshot.isDragging ? 'dragging' : ''}`}
+                          style={provided.draggableProps.style}
                         >
                           <div className="task-left">
                             <div 

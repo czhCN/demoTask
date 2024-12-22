@@ -30,14 +30,26 @@
   justify-content: space-between;
   align-items: center;
   cursor: move;
-  transition: all 0.2s ease;
   min-height: 48px;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.schedule-task:hover {
+  background: #f0f0f0;
+}
+
+/* 拖拽占位符样式 */
+.schedule-tasks [data-rbd-placeholder-context-id] {
+  height: 72px !important;
+  margin-bottom: 8px;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 4px;
 }
 
 .schedule-task.dragging {
   background: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .schedule-task.add-task {
