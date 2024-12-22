@@ -5,7 +5,6 @@ import * as fs from 'fs';
 @Injectable()
 export class AppService implements OnModuleInit {
   private todoList: BaseDto;
-  private service: any;
 
   constructor() {}
 
@@ -27,16 +26,25 @@ export class AppService implements OnModuleInit {
     return this.todoList;
   }
 
-  updateTodo(todo: TodoDto): BaseDto {
+  updateTodo(id: number, todo: TodoDto): BaseDto {
     console.log(todo);
+    console.log('--------');
 
     this.todoList.todoList.forEach((item) => {
-      if (item.id === todo.id) {
+      if (item.id === id) {
         item.hours = todo.hours;
         item.description = item.description;
         item.completed = todo.completed;
+        console.log(item);
       }
     });
+    return this.todoList;
+  }
+
+  deleteTodo(id: number): BaseDto {
+    this.todoList.todoList = this.todoList.todoList.filter(
+      (item) => item.id !== id,
+    );
     return this.todoList;
   }
 

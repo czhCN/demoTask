@@ -2,7 +2,7 @@
  * @Author: C_Com 2632662477@qq.com
  * @Date: 2024-12-22 13:39:33
  * @LastEditors: C_Com 2632662477@qq.com
- * @LastEditTime: 2024-12-22 16:19:40
+ * @LastEditTime: 2024-12-22 19:59:20
  * @FilePath: /demoTask/frontend/src/components/TodoList.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -13,12 +13,12 @@ import { TodoItem } from '../types';
 interface BaseDto {
   todoListId: number;
   todoList: TodoItem[];
-  scheduleTodoList: any[];
+  scheduleTodoList: unknown[];
 }
 
 export const TodoList: React.FC = () => {
   const [todos, setTodos] = useState<TodoItem[]>([]);
-  const [newTaskHours, setNewTaskHours] = useState(0);
+  const [newTaskHours, setNewTaskHours] = useState(1);
   const [newTaskDesc, setNewTaskDesc] = useState("Add task");
   const [isEditing, setIsEditing] = useState(false);
 
@@ -67,7 +67,6 @@ export const TodoList: React.FC = () => {
 
   // 添加新待办事项
   const handleAddTask = async () => {
-    if (newTaskDesc === "Add task") return;
     
     try {
       const response = await fetch('http://localhost:3000/todo', {
@@ -83,7 +82,7 @@ export const TodoList: React.FC = () => {
       });
       const data: BaseDto = await response.json();
       setTodos(data.todoList);
-      setNewTaskHours(0);
+      setNewTaskHours(1);
       setNewTaskDesc("Add task");
       setIsEditing(false);
     } catch (error) {
@@ -94,27 +93,32 @@ export const TodoList: React.FC = () => {
   // 更新小时数
   const handleUpdateHours = async (todo: TodoItem, change: number) => {
     try {
-      const newHours = Math.max(0, todo.hours + change);
-      const response = await fetch(`http://localhost:3000/todo/${todo.id}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...todo,
-          hours: newHours
-        }),
-      });
-      const data: BaseDto = await response.json();
-      setTodos(data.todoList);
+      const newHours = todo.hours + change;
+      if (newHours >= 1 && newHours <= 8) {
+        const response = await fetch(`http://localhost:3000/todo/${todo.id}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...todo,
+            hours: newHours
+          }),
+        });
+        const data: BaseDto = await response.json();
+        setTodos(data.todoList);
+      }
     } catch (error) {
       console.error('更新小时数失败:', error);
     }
   };
 
-  // 添加新的处理函数
+  // 添新的处理函数
   const handleNewTaskHours = (change: number) => {
-    setNewTaskHours(Math.max(0, newTaskHours + change));
+    const newHours = newTaskHours + change;
+    if (newHours >= 1 && newHours <= 8) {
+      setNewTaskHours(newHours);
+    }
   };
 
   // 处理描述的点击事件
@@ -135,6 +139,22 @@ export const TodoList: React.FC = () => {
     } else if (e.key === 'Escape') {
       setIsEditing(false);
       setNewTaskDesc("Add task");
+    }
+  };
+
+  // 添加删除任务的处理函数
+  const handleDeleteTodo = async (id: number) => {
+    try {
+      const response = await fetch(`http://localhost:3000/todo/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data: BaseDto = await response.json();
+      setTodos(data.todoList);
+    } catch (error) {
+      console.error('删除待办事项失败:', error);
     }
   };
 
@@ -173,7 +193,10 @@ export const TodoList: React.FC = () => {
                 className="hour-btn"
                 onClick={() => handleUpdateHours(todo, 1)}
               >+</button>
-              <button className="more-btn">›</button>
+              <button 
+                className="more-btn"
+                onClick={() => handleDeleteTodo(todo.id)}
+              >›</button>
             </div>
           </div>
         ))}
@@ -181,12 +204,15 @@ export const TodoList: React.FC = () => {
       
       <div className="total">
         <div className="line"></div>
-        <div className="total-hours">{todos.reduce((sum, todo) => sum + todo.hours, 0)}</div>
+        <div className="total-hours">{todos.reduce((sum, todo) => sum + todo.hours, 1)}</div>
       </div>
 
       <div className="todo-item add-task">
         <div className="todo-left">
-          <div className="checkbox add" onClick={handleAddTask}>
+          <div 
+            className="checkbox add" 
+            onClick={handleAddTask}
+          >
             <span>+</span>
           </div>
           {isEditing ? (
@@ -207,7 +233,7 @@ export const TodoList: React.FC = () => {
           ) : (
             <span 
               className="description"
-              onClick={handleDescClick}
+              onDoubleClick={handleDescClick}
             >
               {newTaskDesc}
             </span>
@@ -229,7 +255,6 @@ export const TodoList: React.FC = () => {
               handleNewTaskHours(1);
             }}
           >+</button>
-          <button className="more-btn">›</button>
         </div>
       </div>
     </div>

@@ -2,10 +2,10 @@
  * @Author: C_Com 2632662477@qq.com
  * @Date: 2024-12-21 14:56:52
  * @LastEditors: C_Com 2632662477@qq.com
- * @LastEditTime: 2024-12-22 14:45:18
+ * @LastEditTime: 2024-12-22 19:55:43
  * @FilePath: /demoTask/backend/src/app.controller.ts
  */
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { AppService } from './app.service';
 import { BaseDto, TodoDto } from './app.dto';
 
@@ -29,8 +29,13 @@ export class AppController {
   }
 
   @Post('todo/:id')
-  updateTodo(@Body() todo: TodoDto): BaseDto {
-    return this.appService.updateTodo(todo);
+  updateTodo(@Body() todo: TodoDto, @Param('id') id: string): BaseDto {
+    return this.appService.updateTodo(Number(id), todo);
+  }
+
+  @Delete('todo/:id')
+  deleteTodo(@Param('id') id: number): BaseDto {
+    return this.appService.deleteTodo(id);
   }
 
   @Post('schedule')
