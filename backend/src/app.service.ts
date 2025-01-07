@@ -85,31 +85,41 @@ export class AppService implements OnModuleInit {
 
   handleSchedule() {
     const list = this.todoList.scheduleTodoList;
-    const time = list[0].date;
-    let t = 0;
-    for (let index = 0; index < list.length; index++) {
-      const item = list[index];
-      const b = t + item.hours;
-      if (b <= 8) {
-        t = b;
-        item.date = time;
+    const timeList = this.todoList.scheduleTodoList.map((item) => item.date);
+
+    for (const date of timeList) {
+      let h = 0;
+      for (const item of list) {
+        if (new Date(item.date).getTime() >= new Date(date).getTime()) {
+          const b = h + item.hours;
+          if (b <= 8) {
+            h = b;
+            item.date = date;
+          }
+        }
       }
     }
 
-    const kk = [];
-    let time2 = list[0].date;
-    for (let index = 0; index < list.length; index++) {
-      const element = list[index];
-      if (element.date === time2) {
-        this.todoList.scheduleTodoList.splice(index, 1);
-        kk.push(element);
-      }
-      if (index === list.length - 1) {
-        time2 = list[0].date;
-        index = 0;
-      }
-    }
-    this.todoList.scheduleTodoList = kk;
+    this.todoList.scheduleTodoList = this.todoList.scheduleTodoList.sort(
+      (a, b) => {
+        return new Date(a.date).getTime() - new Date(b.date).getTime();
+      },
+    );
+
+    // if (list[0].date > list[2].date) {
+    //   console.log('test');
+    // } else {
+    //   console.log('test2');
+    // }
+
+    // for (let index = 0; index < list.length - 1; index++) {
+    //   let b = index;
+    //   for (let j = index + 1; j < list.length; j++) {
+    //     if (list[j].date < list[b].date) {
+    //       b = j;
+    //     }
+    //   }
+    // }
   }
 
   getSchedule(): BaseDto {
@@ -130,9 +140,6 @@ export class AppService implements OnModuleInit {
     this.todoList.scheduleTodoList = this.todoList.scheduleTodoList.map(
       (item) => {
         if (item.id === id) {
-          // if (schedule.date === item.date) {
-          this.handleSchedule();
-          // }
           return {
             ...item,
             order: schedule.order ?? item.order,
@@ -145,7 +152,7 @@ export class AppService implements OnModuleInit {
         return item;
       },
     );
-    // this.handleSchedule();
+    this.handleSchedule();
 
     this.saveData();
     return this.todoList;
