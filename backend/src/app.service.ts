@@ -81,7 +81,24 @@ export class AppService implements OnModuleInit {
     return this.todoList;
   }
 
+  handleSchedule() {
+    const list = this.todoList.scheduleTodoList;
+    let time = list[0].date;
+    let t = 0;
+    for (let index = 0; index < list.length; index++) {
+      const item = list[index];
+      t = t + item.hours;
+      if (t <= 8) {
+        item.date = time;
+      } else if (index < list.length - 1) {
+        time = list[index + 1].date;
+        t = 0;
+      }
+    }
+  }
+
   getSchedule(): BaseDto {
+    this.handleSchedule();
     return this.todoList;
   }
 
@@ -89,6 +106,7 @@ export class AppService implements OnModuleInit {
     this.todoList.scheduleId++;
     schedule.id = this.todoList.scheduleId;
     this.todoList.scheduleTodoList.push(schedule);
+    this.handleSchedule();
     this.saveData();
     return this.todoList;
   }
@@ -97,6 +115,11 @@ export class AppService implements OnModuleInit {
     this.todoList.scheduleTodoList = this.todoList.scheduleTodoList.map(
       (item) => {
         if (item.id === id) {
+          if (schedule.date === item.date) {
+            console.log('test');
+
+            this.handleSchedule();
+          }
           return {
             ...item,
             order: schedule.order ?? item.order,
@@ -109,6 +132,8 @@ export class AppService implements OnModuleInit {
         return item;
       },
     );
+    // this.handleSchedule();
+
     this.saveData();
     return this.todoList;
   }

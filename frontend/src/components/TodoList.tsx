@@ -1,11 +1,3 @@
-/*
- * @Author: C_Com 2632662477@qq.com
- * @Date: 2024-12-22 13:39:33
- * @LastEditors: C_Com 2632662477@qq.com
- * @LastEditTime: 2024-12-22 19:59:20
- * @FilePath: /demoTask/frontend/src/components/TodoList.tsx
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- */
 import React, { useEffect, useState } from 'react';
 import './TodoList.css';
 import { TodoItem } from '../types';
@@ -217,7 +209,7 @@ export const TodoList: React.FC = () => {
           
           <div className="total">
             <div className="line"></div>
-            <div className="total-hours">{todos.reduce((sum, todo) => sum + todo.hours, 1)}</div>
+            <div className="total-hours">{todos.reduce((sum, todo) => sum + todo.hours, 0)}</div>
           </div>
 
           <div className="todo-item add-task">
@@ -228,6 +220,7 @@ export const TodoList: React.FC = () => {
               >
                 <span>+</span>
               </div>
+
               {isEditing ? (
                 <input
                   type="text"
