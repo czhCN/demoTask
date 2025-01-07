@@ -15,6 +15,8 @@ export class AppService implements OnModuleInit {
     try {
       const data = fs.readFileSync(this.dataPathInit, 'utf8');
       this.todoList = JSON.parse(data);
+      this.saveData();
+
       console.log('数据加载成功:', this.todoList);
     } catch (error) {
       console.error('读取数据文件失败:', error);
@@ -83,18 +85,31 @@ export class AppService implements OnModuleInit {
 
   handleSchedule() {
     const list = this.todoList.scheduleTodoList;
-    let time = list[0].date;
+    const time = list[0].date;
     let t = 0;
     for (let index = 0; index < list.length; index++) {
       const item = list[index];
-      t = t + item.hours;
-      if (t <= 8) {
+      const b = t + item.hours;
+      if (b <= 8) {
+        t = b;
         item.date = time;
-      } else if (index < list.length - 1) {
-        time = list[index + 1].date;
-        t = 0;
       }
     }
+
+    const kk = [];
+    let time2 = list[0].date;
+    for (let index = 0; index < list.length; index++) {
+      const element = list[index];
+      if (element.date === time2) {
+        this.todoList.scheduleTodoList.splice(index, 1);
+        kk.push(element);
+      }
+      if (index === list.length - 1) {
+        time2 = list[0].date;
+        index = 0;
+      }
+    }
+    this.todoList.scheduleTodoList = kk;
   }
 
   getSchedule(): BaseDto {
@@ -115,11 +130,9 @@ export class AppService implements OnModuleInit {
     this.todoList.scheduleTodoList = this.todoList.scheduleTodoList.map(
       (item) => {
         if (item.id === id) {
-          if (schedule.date === item.date) {
-            console.log('test');
-
-            this.handleSchedule();
-          }
+          // if (schedule.date === item.date) {
+          this.handleSchedule();
+          // }
           return {
             ...item,
             order: schedule.order ?? item.order,
