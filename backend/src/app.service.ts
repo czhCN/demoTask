@@ -140,6 +140,9 @@ export class AppService implements OnModuleInit {
     this.todoList.scheduleTodoList = this.todoList.scheduleTodoList.map(
       (item) => {
         if (item.id === id) {
+          if (schedule.date === item.date && schedule.order !== item.order) {
+            this.handleSchedule();
+          }
           return {
             ...item,
             order: schedule.order ?? item.order,
@@ -152,7 +155,6 @@ export class AppService implements OnModuleInit {
         return item;
       },
     );
-    this.handleSchedule();
 
     this.saveData();
     return this.todoList;
